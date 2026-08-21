@@ -1,5 +1,4 @@
-
-name: My First Pipeline
+name: Deploy Pipeline
 
 on:
   push:
@@ -7,18 +6,18 @@ on:
       - main
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Show files
-        run: ls -la
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/github_actions_deploy
+          chmod 600 ~/.ssh/github_actions_deploy
 
-      - name: Test Node.js
-        run: node --version
-
-      - name: Pipeline message
-        run: echo "My GitHub Actions pipeline is working!"
+      - name: Check SSH
+        run: ssh -V
